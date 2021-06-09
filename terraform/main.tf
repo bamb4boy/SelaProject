@@ -1,12 +1,17 @@
+#the required terraform version
 terraform {
   required_version = ">= 0.12.0"
 }
 
+
+#aws provider, will give us the ability to deploy aws infrastructure
 provider "aws" {
   version = ">= 2.28.1"
   region  = var.region
 }
 
+
+#these data sources will give help us to parse data outside of the terraform to different modules
 data "aws_eks_cluster" "cluster" {
   name = module.eks.cluster_id
 }
@@ -18,6 +23,8 @@ data "aws_eks_cluster_auth" "cluster" {
 data "aws_availability_zones" "available" {
 }
 
+
+#creates a security group for our self managed nodes
 resource "aws_security_group" "worker_group_mgmt_one" {
   name_prefix = "worker_group_mgmt_one"
   vpc_id      = module.vpc.vpc_id
@@ -33,37 +40,24 @@ resource "aws_security_group" "worker_group_mgmt_one" {
   }
 }
 
-resource "aws_security_group" "all_worker_mgmt" {
-  name_prefix = "all_worker_management"
-  vpc_id      = module.vpc.vpc_id
-
-  ingress {
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-
-    cidr_blocks = [
-      "10.0.0.0/8",
-      "172.16.0.0/12",
-      "192.168.0.0/16",
-    ]
-  }
-}
-
+#creates a vpc to run in our cluster
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "2.6.0"
 
-  name                 = "test-vpc"
+  name                 = "SelaTask-vpc"
   cidr                 = "10.0.0.0/16"
   azs                  = data.aws_availability_zones.available.names
+#creates subnets in the vpc (not all of them will be used they are just available)
   private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
-  enable_nat_gateway   = false
-  single_nat_gateway   = false
-  enable_dns_hostnames = false
+#we need to enable these three options in order that our auto scaling worker nodes will be able to connect
+  enable_nat_gateway   = true
+  single_nat_gateway   = true
+  enable_dns_hostnames = true
 
-  public_subnet_tags = {
+#gives us the option to use tags in order to refer a subnet
+/*  public_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/elb"                      = "1"
   }
@@ -71,9 +65,10 @@ module "vpc" {
   private_subnet_tags = {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
     "kubernetes.io/role/internal-elb"             = "1"
-  }
+  }*/
 }
 
+#creates the eks cluster
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
   cluster_name    = var.cluster_name
@@ -99,7 +94,7 @@ module "eks" {
 
 
 
-provider "kubernetes" {
+/*provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
@@ -167,4 +162,4 @@ resource "kubernetes_service" "example" {
 
     type = "LoadBalancer"
   }
-}
+}*/
