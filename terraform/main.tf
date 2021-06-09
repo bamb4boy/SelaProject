@@ -93,6 +93,17 @@ module "eks" {
 }
 
 
+#module to create ECR
+resource "aws_ecr_repository" "SelaTask-ECR" {
+  name                 = "SelaTask-ECR"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+
 #module to create pods not yet relevant
 /*provider "kubernetes" {
   host                   = data.aws_eks_cluster.cluster.endpoint
