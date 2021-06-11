@@ -96,11 +96,11 @@ module "eks" {
 
 #module to create ECR
 resource "aws_ecr_repository" "SelaTask-ECR" {
-  name                 = "SelaTask-ECR"
+  name                 = "SelaTaskECR"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
-    scan_on_push = true
+    scan_on_push = false
   }
 }
 
