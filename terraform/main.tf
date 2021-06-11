@@ -1,14 +1,14 @@
 #the required terraform version
 terraform {
-  required_version = ">= 0.12.0"
+  required_version = ">= 0.13"
 }
 
 #aws provider, will give us the ability to deploy aws infrastructure, and aws authentications
 provider "aws" {
   version = ">= 2.28.1"
   region  = var.region
-  access_key = "my-access-key"
-  secret_key = "my-secret-key"
+  access_key = var.my-access-key
+  secret_key = var.my-secret-key
 }
 
 
