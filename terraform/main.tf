@@ -4,6 +4,7 @@ terraform {
 }
 
 
+
 #aws provider, will give us the ability to deploy aws infrastructure
 provider "aws" {
   version = ">= 2.28.1"
