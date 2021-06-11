@@ -4,3 +4,7 @@ terraform.pem
 aws
 cred.txt
 cred.tf
+terraform.tfstate
+terraform.tfstate.backup
+kubectl
+kubeconfig_SelaTask-eks

@@ -73,7 +73,7 @@ module "vpc" {
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
   cluster_name    = var.cluster_name
-  cluster_version = "1.17"
+  cluster_version = "1.20"
   subnets         = module.vpc.private_subnets
   version = "12.2.0"
   cluster_create_timeout = "1h"
@@ -96,84 +96,22 @@ module "eks" {
 
 #module to create ECR
 resource "aws_ecr_repository" "SelaTaskECR" {
-  name                 = "SelaTaskECR"
+  name                 = "selataskecr"
   image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = false
   }
 }
-//#Get AWS account id
-//data "aws_caller_identity" "current" {
-//
-//}
-//
-//#Create IAM User
-//resource "aws_iam_user" "ST_ecr" {
-//  name = "ci-ST_ecr"
-//
-//}
-//
-//#Create Key
-//resource "aws_iam_access_key" "aws_access_key" {
-//  user = aws_iam_user.ST_ecr.name
-//
-//  depends_on = [
-//    aws_iam_user.ST_ecr
-//  ]
-//}
-//
-//data "aws_iam_policy_document" "user_policy" {
-//  statement {
-//    effect = "Allow"
-//    actions = [
-//      "ecr:PutLifecyclePolicy",
-//      "ecr:PutImageTagMutability",
-//      "ecr:DescribeImageScanFindings",
-//      "ecr:StartImageScan",
-//      "ecr:GetLifecyclePolicyPreview",
-//      "ecr:GetDownloadUrlForLayer",
-//      "ecr:ListTagsForResource",
-//      "ecr:UploadLayerPart",
-//      "ecr:ListImages",
-//      "ecr:PutImage",
-//      "ecr:UntagResource",
-//      "ecr:BatchGetImage",
-//      "ecr:DescribeImages",
-//      "ecr:TagResource",
-//      "ecr:DescribeRepositories",
-//      "ecr:StartLifecyclePolicyPreview",
-//      "ecr:InitiateLayerUpload",
-//      "ecr:BatchCheckLayerAvailability",
-//      "ecr:GetRepositoryPolicy",
-//      "ecr:GetLifecyclePolicy",
-//      "ecr:GetAuthorizationToken",
-//      "ecr:CompleteLayerUpload"
-//    ]
-//
-//    resources = [aws_ecr_repository.SelaTaskECR.arn]
-//  }
-//  statement {
-//    effect = "Allow"
-//    actions = [
-//      "ecr:GetAuthorizationToken",
-//      "ecr:GetDownloadUrlForLayer",
-//      "ecr:BatchGetImage",
-//      "ecr:BatchCheckLayerAvailability"
-//    ]
-//
-//    resources = ["*"]
-//  }
-//}
 
-//#module to create pods not yet relevant
-//provider "kubernetes" {
-//  host                   = data.aws_eks_cluster.cluster.endpoint
-//  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-//  token                  = data.aws_eks_cluster_auth.cluster.token
+#module to create pods not yet relevant
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
+  token                  = data.aws_eks_cluster_auth.cluster.token
 //  load_config_file       = false
-//  version                = "~> 1.11"
-//}
+  version                = "~> 1.11"
+}
 //
 //resource "kubernetes_deployment" "example" {
 //  metadata {
