@@ -3,3 +3,4 @@
 terraform.pem
 aws
 cred.txt
+cred.tf
