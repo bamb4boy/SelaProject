@@ -103,7 +103,68 @@ resource "aws_ecr_repository" "SelaTask-ECR" {
     scan_on_push = false
   }
 }
+#Get AWS account id
+data "aws_caller_identity" "current" {
 
+}
+
+#Create IAM User
+resource "aws_iam_user" "ST_ecr" {
+  name = "ci-ST_ecr"
+
+}
+
+#Create Key
+resource "aws_iam_access_key" "aws_access_key" {
+  user = aws_iam_user.ST_ecr.name
+
+  depends_on = [
+    aws_iam_user.ST_ecr
+  ]
+}
+
+data "aws_iam_policy_document" "user_policy" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:PutLifecyclePolicy",
+      "ecr:PutImageTagMutability",
+      "ecr:DescribeImageScanFindings",
+      "ecr:StartImageScan",
+      "ecr:GetLifecyclePolicyPreview",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:ListTagsForResource",
+      "ecr:UploadLayerPart",
+      "ecr:ListImages",
+      "ecr:PutImage",
+      "ecr:UntagResource",
+      "ecr:BatchGetImage",
+      "ecr:DescribeImages",
+      "ecr:TagResource",
+      "ecr:DescribeRepositories",
+      "ecr:StartLifecyclePolicyPreview",
+      "ecr:InitiateLayerUpload",
+      "ecr:BatchCheckLayerAvailability",
+      "ecr:GetRepositoryPolicy",
+      "ecr:GetLifecyclePolicy",
+      "ecr:GetAuthorizationToken",
+      "ecr:CompleteLayerUpload"
+    ]
+
+    resources = [aws_ecr_repository.SelaTask-ECR.arn]
+  }
+  statement {
+    effect = "Allow"
+    actions = [
+      "ecr:GetAuthorizationToken",
+      "ecr:GetDownloadUrlForLayer",
+      "ecr:BatchGetImage",
+      "ecr:BatchCheckLayerAvailability"
+    ]
+
+    resources = ["*"]
+  }
+}
 
 #module to create pods not yet relevant
 /*provider "kubernetes" {
