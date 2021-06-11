@@ -95,7 +95,7 @@ module "eks" {
 
 
 #module to create ECR
-resource "aws_ecr_repository" "SelaTask-ECR" {
+resource "aws_ecr_repository" "SelaTaskECR" {
   name                 = "SelaTaskECR"
   image_tag_mutability = "MUTABLE"
 
@@ -151,7 +151,7 @@ data "aws_iam_policy_document" "user_policy" {
       "ecr:CompleteLayerUpload"
     ]
 
-    resources = [aws_ecr_repository.SelaTask-ECR.arn]
+    resources = [aws_ecr_repository.SelaTaskECR.arn]
   }
   statement {
     effect = "Allow"
