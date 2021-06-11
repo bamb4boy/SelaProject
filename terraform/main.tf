@@ -94,15 +94,15 @@ module "eks" {
 }
 
 
-//#module to create ECR
-//resource "aws_ecr_repository" "SelaTaskECR" {
-//  name                 = "SelaTaskECR"
-//  image_tag_mutability = "MUTABLE"
-//
-//  image_scanning_configuration {
-//    scan_on_push = false
-//  }
-//}
+#module to create ECR
+resource "aws_ecr_repository" "SelaTaskECR" {
+  name                 = "SelaTaskECR"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = false
+  }
+}
 //#Get AWS account id
 //data "aws_caller_identity" "current" {
 //
