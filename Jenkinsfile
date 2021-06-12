@@ -14,14 +14,16 @@ pipeline {
         }
         stage("push") {
             steps {
-//                 sh "sudo aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 966444541051.dkr.ecr.us-east-2.amazonaws.com"
+                sh "sudo aws ecr get-login-password --region us-east-2 | docker login --username AWS --password-stdin 966444541051.dkr.ecr.us-east-2.amazonaws.com"
                 sh "sudo docker tag bamb4boy/hello_world:latest 966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest"
                 sh "sudo docker push 966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest"
             }
         }
         stage("deploy"){
             steps {
-                echo 'deploy the application'
+                sh "sudo aws eks update-kubeconfig --name SelaTask-eks --region us-east-2"
+                sh "sudo docker pull 966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest"
+                sh "sudo kubectl create deployment --image=966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest hello_world_app"
             }
         }
     }
