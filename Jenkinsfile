@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh "sudo aws eks update-kubeconfig --name SelaTask-eks --region us-east-2"
                 sh "sudo docker pull 966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest"
-                sh "kubectl create deployment --image=966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest hello_world_app --port=22"
+                sh "kubectl create deployment --image=966444541051.dkr.ecr.us-east-2.amazonaws.com/selataskecr:latest hello_world_app"
             }
         }
     }
