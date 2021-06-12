@@ -8,7 +8,6 @@ pipeline {
                     sh "sudo docker build -t bamb4boy/hello_world . "
                     }
                 }
-
             }
         }
         stage("test") {
