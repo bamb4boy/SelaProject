@@ -3,10 +3,12 @@ pipeline {
     stages {
         stage("build"){
             steps {
-                dir('application')
+                dir('application'){
                     script {
                     sh "sudo docker build -t bamb4boy/hello_world . "
                     }
+                }
+
             }
         }
         stage("test") {
