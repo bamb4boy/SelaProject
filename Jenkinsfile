@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+        laber 'docker_node'
+    }
     stages {
         stage("build"){
             steps {
