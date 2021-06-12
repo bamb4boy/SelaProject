@@ -1,6 +1,6 @@
 pipeline {
     agent {
-        laber 'docker_node'
+        label 'docker_node'
     }
     stages {
         stage("build"){
