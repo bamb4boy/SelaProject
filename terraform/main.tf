@@ -54,6 +54,7 @@ module "vpc" {
   private_subnets      = ["10.0.1.0/24", "10.0.2.0/24", "10.0.3.0/24"]
   public_subnets       = ["10.0.4.0/24", "10.0.5.0/24", "10.0.6.0/24"]
 #we need to enable these three options in order that our auto scaling worker nodes will be able to connect
+#Nat GW is there to allow traffic from the private network to the internet
   enable_nat_gateway   = true
   single_nat_gateway   = true
   enable_dns_hostnames = true
@@ -68,6 +69,7 @@ module "eks" {
   subnets         = module.vpc.private_subnets
   version = "12.2.0"
   cluster_create_timeout = "1h"
+    #we make the endpoint private so that only those with the correct IAM role will be able to connect the api server
   cluster_endpoint_private_access = true
 
   vpc_id = module.vpc.vpc_id
@@ -95,10 +97,3 @@ resource "aws_ecr_repository" "SelaTaskECR" {
   }
 }
 
-#module to create pods not yet relevant
-provider "kubernetes" {
-  host                   = data.aws_eks_cluster.cluster.endpoint
-  cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
-  token                  = data.aws_eks_cluster_auth.cluster.token
-  version                = "~> 1.11"
-}
